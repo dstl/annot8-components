@@ -15,18 +15,17 @@
  */
 package uk.gov.dstl.annot8.military.processors;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import io.annot8.api.components.Processor;
 import io.annot8.api.settings.NoSettings;
 import io.annot8.conventions.PropertyKeys;
-import org.junit.jupiter.api.Test;
-
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
 
 public class TaskForceTest {
   @Test
-  public void testCreation(){
+  public void testCreation() {
     TaskForce tf = new TaskForce();
     Processor tfProc = tf.createComponent(null, NoSettings.getInstance());
     assertNotNull(tfProc);
@@ -34,11 +33,11 @@ public class TaskForceTest {
   }
 
   @Test
-  public void testTaskForce(){
+  public void testTaskForce() {
     RegexTestingUtils.testSubstringToPropertyExtraction(
-            "Task force 123, TF4-56 and TF 789. But not ATF000 or TF000a.",
-            Stream.of("TF123", "TF4-56", "TF789"),
-            new TaskForce(),
-            PropertyKeys.PROPERTY_KEY_IDENTIFIER);
+        "Task force 123, TF4-56 and TF 789. But not ATF000 or TF000a.",
+        Stream.of("TF123", "TF4-56", "TF789"),
+        new TaskForce(),
+        PropertyKeys.PROPERTY_KEY_IDENTIFIER);
   }
 }

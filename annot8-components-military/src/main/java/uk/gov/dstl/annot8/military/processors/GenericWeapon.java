@@ -32,7 +32,6 @@ import io.annot8.components.stopwords.resources.Stopwords;
 import io.annot8.conventions.AnnotationTypes;
 import io.annot8.conventions.PropertyKeys;
 import io.annot8.utils.text.PluralUtils;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -50,51 +49,117 @@ public class GenericWeapon extends AbstractProcessorDescriptor<MultiProcessor, N
       sw = context.getResource(Stopwords.class).get();
     }
 
-    Set<String> firearm = Set.of("firearm", "gun", "handgun", "pistol", "revolver", "rifle", "sidearm", "shotgun");
-    Set<String> ammunition = Set.of("ammo", "ammunition", "bullet", "cartridge", "magazine", "round", "shell");
-    Set<String> explosive = Set.of("airstrike", "artillery", "bomb", "explosive", "grenade", "ied", "missile", "mortar", "ordnance", "rocket", "rpg", "torpedo", "vbied");
+    Set<String> firearm =
+        Set.of("firearm", "gun", "handgun", "pistol", "revolver", "rifle", "sidearm", "shotgun");
+    Set<String> ammunition =
+        Set.of("ammo", "ammunition", "bullet", "cartridge", "magazine", "round", "shell");
+    Set<String> explosive =
+        Set.of(
+            "airstrike",
+            "artillery",
+            "bomb",
+            "explosive",
+            "grenade",
+            "ied",
+            "missile",
+            "mortar",
+            "ordnance",
+            "rocket",
+            "rpg",
+            "torpedo",
+            "vbied");
     Set<String> bladed = Set.of("axe", "blade", "dagger", "knife", "knive", "machete", "sword");
     Set<String> other = Set.of("armament", "flamethrower", "munition", "weapon", "wmd");
 
-    Set<String> descriptors = Set.of(
-        "chemical", "biological", "nuclear", "atomic", "sonic", "laser",
-        "rocket", "propelled", "rail", "air", "ground", "surface",
-        "dirty", "improvised", "explosive", "unexploded",
-        "lethal", "less-lethal", "non-lethal",
-        "tactical", "combat", "commando", "recoilless", "silenced",
-        "anti", "aircraft", "tank", "ship", "submarine", "antiaircraft", "anti-aircraft", "antitank", "anti-tank", "antiship", "anti-ship", "antisubmarine", "anti-submarine",
-        "sniper", "machine", "assault", "submachine", "sub-machine"
-    );
+    Set<String> descriptors =
+        Set.of(
+            "chemical",
+            "biological",
+            "nuclear",
+            "atomic",
+            "sonic",
+            "laser",
+            "rocket",
+            "propelled",
+            "rail",
+            "air",
+            "ground",
+            "surface",
+            "dirty",
+            "improvised",
+            "explosive",
+            "unexploded",
+            "lethal",
+            "less-lethal",
+            "non-lethal",
+            "tactical",
+            "combat",
+            "commando",
+            "recoilless",
+            "silenced",
+            "anti",
+            "aircraft",
+            "tank",
+            "ship",
+            "submarine",
+            "antiaircraft",
+            "anti-aircraft",
+            "antitank",
+            "anti-tank",
+            "antiship",
+            "anti-ship",
+            "antisubmarine",
+            "anti-submarine",
+            "sniper",
+            "machine",
+            "assault",
+            "submachine",
+            "sub-machine");
 
-    Processor pFirearm = new DescribedWordToken.Processor(sw, AnnotationTypes.ANNOTATION_TYPE_WEAPON,
-        PluralUtils.pluraliseSet(firearm),
-        descriptors,
-        false,
-        Map.of(PropertyKeys.PROPERTY_KEY_SUBTYPE, "firearm"));
+    Processor pFirearm =
+        new DescribedWordToken.Processor(
+            sw,
+            AnnotationTypes.ANNOTATION_TYPE_WEAPON,
+            PluralUtils.pluraliseSet(firearm),
+            descriptors,
+            false,
+            Map.of(PropertyKeys.PROPERTY_KEY_SUBTYPE, "firearm"));
 
-    Processor pAmmunition = new DescribedWordToken.Processor(sw, AnnotationTypes.ANNOTATION_TYPE_WEAPON,
-        PluralUtils.pluraliseSet(ammunition),
-        descriptors,
-        false,
-        Map.of(PropertyKeys.PROPERTY_KEY_SUBTYPE, "ammunition"));
+    Processor pAmmunition =
+        new DescribedWordToken.Processor(
+            sw,
+            AnnotationTypes.ANNOTATION_TYPE_WEAPON,
+            PluralUtils.pluraliseSet(ammunition),
+            descriptors,
+            false,
+            Map.of(PropertyKeys.PROPERTY_KEY_SUBTYPE, "ammunition"));
 
-    Processor pExplosive = new DescribedWordToken.Processor(sw, AnnotationTypes.ANNOTATION_TYPE_WEAPON,
-        PluralUtils.pluraliseSet(explosive),
-        descriptors,
-        false,
-        Map.of(PropertyKeys.PROPERTY_KEY_SUBTYPE, "explosive"));
+    Processor pExplosive =
+        new DescribedWordToken.Processor(
+            sw,
+            AnnotationTypes.ANNOTATION_TYPE_WEAPON,
+            PluralUtils.pluraliseSet(explosive),
+            descriptors,
+            false,
+            Map.of(PropertyKeys.PROPERTY_KEY_SUBTYPE, "explosive"));
 
-    Processor pBladed = new DescribedWordToken.Processor(sw, AnnotationTypes.ANNOTATION_TYPE_WEAPON,
-        PluralUtils.pluraliseSet(bladed),
-        descriptors,
-        false,
-        Map.of(PropertyKeys.PROPERTY_KEY_SUBTYPE, "bladed"));
+    Processor pBladed =
+        new DescribedWordToken.Processor(
+            sw,
+            AnnotationTypes.ANNOTATION_TYPE_WEAPON,
+            PluralUtils.pluraliseSet(bladed),
+            descriptors,
+            false,
+            Map.of(PropertyKeys.PROPERTY_KEY_SUBTYPE, "bladed"));
 
-    Processor pOther = new DescribedWordToken.Processor(sw, AnnotationTypes.ANNOTATION_TYPE_WEAPON,
-        PluralUtils.pluraliseSet(other),
-        descriptors,
-        false,
-        Collections.emptyMap());
+    Processor pOther =
+        new DescribedWordToken.Processor(
+            sw,
+            AnnotationTypes.ANNOTATION_TYPE_WEAPON,
+            PluralUtils.pluraliseSet(other),
+            descriptors,
+            false,
+            Collections.emptyMap());
 
     return new MultiProcessor(pFirearm, pAmmunition, pExplosive, pBladed, pOther);
   }

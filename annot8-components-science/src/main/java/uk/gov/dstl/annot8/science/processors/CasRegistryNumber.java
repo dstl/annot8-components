@@ -27,70 +27,67 @@ import io.annot8.common.data.bounds.SpanBounds;
 import io.annot8.common.data.content.Text;
 import io.annot8.components.base.processors.AbstractTextProcessor;
 import io.annot8.conventions.AnnotationTypes;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @ComponentName("CAS Registry Number")
 @ComponentDescription("Identify chemicals by looking for CAS numbers and checking the check digit")
-public class CasRegistryNumber extends AbstractProcessorDescriptor<CasRegistryNumber.Processor, NoSettings> {
+public class CasRegistryNumber
+    extends AbstractProcessorDescriptor<CasRegistryNumber.Processor, NoSettings> {
+
+  @Override
+  protected Processor createComponent(Context context, NoSettings settings) {
+    return new Processor();
+  }
+
+  @Override
+  public Capabilities capabilities() {
+    return new SimpleCapabilities.Builder()
+        .withProcessesContent(Text.class)
+        .withCreatesAnnotations(AnnotationTypes.ANNOTATION_TYPE_CHEMICAL, SpanBounds.class)
+        .build();
+  }
+
+  public static class Processor extends AbstractTextProcessor {
+
+    public static final Pattern CAS_REGEX =
+        Pattern.compile("\\b(\\d{2,7})-(\\d{2})-(\\d{1})\\b", Pattern.CASE_INSENSITIVE);
 
     @Override
-    protected Processor createComponent(Context context, NoSettings settings) {
-        return new Processor();
-    }
+    protected void process(Text content) {
 
-    @Override
-    public Capabilities capabilities() {
-        return new SimpleCapabilities.Builder()
-                .withProcessesContent(Text.class)
-                .withCreatesAnnotations(AnnotationTypes.ANNOTATION_TYPE_CHEMICAL, SpanBounds.class)
-                .build();
-    }
+      AnnotationStore annotationStore = content.getAnnotations();
 
-    public static class Processor extends AbstractTextProcessor {
+      Matcher m = CAS_REGEX.matcher(content.getData());
+      while (m.find()) {
 
-        public static final Pattern CAS_REGEX = Pattern.compile("\\b(\\d{2,7})-(\\d{2})-(\\d{1})\\b", Pattern.CASE_INSENSITIVE);
+        // Check checksum
+        Integer checkDigit = Integer.valueOf(m.group(3));
 
-        @Override
-        protected void process(Text content) {
+        String part1 = m.group(1);
+        String part2 = m.group(2);
 
-            AnnotationStore annotationStore = content.getAnnotations();
+        part1 = new StringBuilder(part1).reverse().toString();
 
-            Matcher m = CAS_REGEX.matcher(content.getData());
-            while (m.find()) {
+        Integer sum =
+            Integer.parseInt(part2.substring(1, 2)) + (2 * Integer.parseInt(part2.substring(0, 1)));
+        Integer pos = 0;
+        while (pos < part1.length()) {
+          Integer x = Integer.valueOf(part1.substring(pos, pos + 1));
+          sum += (pos + 3) * x;
 
-                // Check checksum
-                Integer checkDigit = Integer.valueOf(m.group(3));
-
-                String part1 = m.group(1);
-                String part2 = m.group(2);
-
-                part1 = new StringBuilder(part1).reverse().toString();
-
-                Integer sum =
-                        Integer.parseInt(part2.substring(1, 2)) + (2 * Integer.parseInt(part2.substring(0, 1)));
-                Integer pos = 0;
-                while (pos < part1.length()) {
-                    Integer x = Integer.valueOf(part1.substring(pos, pos + 1));
-                    sum += (pos + 3) * x;
-
-                    pos++;
-                }
-
-                if (sum % 10 == checkDigit) {
-
-                    annotationStore
-                            .create()
-                            .withType(AnnotationTypes.ANNOTATION_TYPE_CHEMICAL)
-                            .withBounds(new SpanBounds(m.start(), m.end()))
-                            .save();
-                }
-
-            }
+          pos++;
         }
+
+        if (sum % 10 == checkDigit) {
+
+          annotationStore
+              .create()
+              .withType(AnnotationTypes.ANNOTATION_TYPE_CHEMICAL)
+              .withBounds(new SpanBounds(m.start(), m.end()))
+              .save();
+        }
+      }
     }
-
-
-
+  }
 }

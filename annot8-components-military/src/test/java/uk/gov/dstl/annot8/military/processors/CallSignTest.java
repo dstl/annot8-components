@@ -15,18 +15,17 @@
  */
 package uk.gov.dstl.annot8.military.processors;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import io.annot8.api.components.Processor;
 import io.annot8.api.settings.NoSettings;
 import io.annot8.conventions.PropertyKeys;
-import org.junit.jupiter.api.Test;
-
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
 
 public class CallSignTest {
   @Test
-  public void testCreation(){
+  public void testCreation() {
     CallSign cs = new CallSign();
     Processor csProc = cs.createComponent(null, NoSettings.getInstance());
     assertNotNull(csProc);
@@ -34,11 +33,11 @@ public class CallSignTest {
   }
 
   @Test
-  public void testCallsigns(){
+  public void testCallsigns() {
     RegexTestingUtils.testSubstringToPropertyExtraction(
-            "Bob (C\\S ECHO BRAVO) reported a contact at 0900. Alice (C/S FOXTROT) responded.",
-            Stream.of("C/S ECHO BRAVO", "C/S FOXTROT"),
-            new CallSign(),
-            PropertyKeys.PROPERTY_KEY_IDENTIFIER);
+        "Bob (C\\S ECHO BRAVO) reported a contact at 0900. Alice (C/S FOXTROT) responded.",
+        Stream.of("C/S ECHO BRAVO", "C/S FOXTROT"),
+        new CallSign(),
+        PropertyKeys.PROPERTY_KEY_IDENTIFIER);
   }
 }

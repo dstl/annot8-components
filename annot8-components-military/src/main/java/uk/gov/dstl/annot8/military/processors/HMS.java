@@ -29,7 +29,6 @@ import io.annot8.common.data.content.Text;
 import io.annot8.components.base.processors.AbstractRegexProcessor;
 import io.annot8.conventions.AnnotationTypes;
 import io.annot8.conventions.PropertyKeys;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,14 +52,14 @@ public class HMS extends AbstractProcessorDescriptor<HMS.Processor, NoSettings> 
   public static class Processor extends AbstractRegexProcessor {
     public Processor() {
       super(
-          Pattern.compile("\\bH[.]?M[.]?((A|B|C|N[.]?Z|P[.]?N[.]?G|J|T[.]?S)[.]?)?S[.]?( [A-Z][a-z]*){1,3}\\b"),
+          Pattern.compile(
+              "\\bH[.]?M[.]?((A|B|C|N[.]?Z|P[.]?N[.]?G|J|T[.]?S)[.]?)?S[.]?( [A-Z][a-z]*){1,3}\\b"),
           0,
-          AnnotationTypes.ANNOTATION_TYPE_VEHICLE
-      );
+          AnnotationTypes.ANNOTATION_TYPE_VEHICLE);
     }
 
     @Override
-    protected void addProperties(Annotation.Builder builder, Matcher m){
+    protected void addProperties(Annotation.Builder builder, Matcher m) {
       builder.withProperty(PropertyKeys.PROPERTY_KEY_NAME, m.group());
       builder.withProperty(PropertyKeys.PROPERTY_KEY_SUBTYPE, "maritime");
     }

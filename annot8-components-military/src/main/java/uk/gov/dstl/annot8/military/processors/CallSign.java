@@ -28,7 +28,6 @@ import io.annot8.common.data.content.Text;
 import io.annot8.components.base.processors.AbstractRegexProcessor;
 import io.annot8.conventions.AnnotationTypes;
 import io.annot8.conventions.PropertyKeys;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,10 +50,10 @@ public class CallSign extends AbstractProcessorDescriptor<CallSign.Processor, No
 
   public static class Processor extends AbstractRegexProcessor {
     public Processor() {
-      super(Pattern.compile("\\bC[\\\\|/]S ([A-Z ]+)\\b"),
+      super(
+          Pattern.compile("\\bC[\\\\|/]S ([A-Z ]+)\\b"),
           0,
-          AnnotationTypes.ENTITY_PREFIX + "callSign"
-      );
+          AnnotationTypes.ENTITY_PREFIX + "callSign");
     }
 
     @Override

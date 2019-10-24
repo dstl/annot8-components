@@ -15,24 +15,23 @@
  */
 package uk.gov.dstl.annot8.military.processors;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import io.annot8.api.settings.NoSettings;
 import io.annot8.conventions.PropertyKeys;
-import org.junit.jupiter.api.Test;
-
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
 
 public class HMSTest {
   @Test
-  public void testCreation(){
+  public void testCreation() {
     HMS hms = new HMS();
     HMS.Processor proc = hms.createComponent(null, NoSettings.getInstance());
     assertNotNull(proc);
   }
 
   @Test
-  public void testHMS(){
+  public void testHMS() {
     RegexTestingUtils.testSubstringToPropertyExtraction(
         "HMS Troutbridge sailed into New York last Friday. H.M.S. Hidden Dragon provided an escort.",
         Stream.of("HMS Troutbridge", "H.M.S. Hidden Dragon"),
@@ -41,7 +40,7 @@ public class HMSTest {
   }
 
   @Test
-  public void testHMSVariants(){
+  public void testHMSVariants() {
     RegexTestingUtils.testSubstringToPropertyExtraction(
         "HMJS Troutbridge sailed into New York last Friday. H.M.P.N.G.S. Hidden Dragon provided an escort.",
         Stream.of("HMJS Troutbridge", "H.M.P.N.G.S. Hidden Dragon"),

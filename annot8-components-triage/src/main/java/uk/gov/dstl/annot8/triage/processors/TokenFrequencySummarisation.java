@@ -32,26 +32,27 @@ import io.annot8.components.stopwords.resources.Stopwords;
 import io.annot8.components.stopwords.resources.StopwordsIso;
 import io.annot8.conventions.AnnotationTypes;
 import io.annot8.conventions.PropertyKeys;
-
-import javax.json.bind.annotation.JsonbCreator;
-import javax.json.bind.annotation.JsonbProperty;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 
 @ComponentName("Token Frequency Summarisation")
 @ComponentDescription("Create a text summary of a document based on token frequency")
 @SettingsClass(TokenFrequencySummarisation.Settings.class)
-public class TokenFrequencySummarisation extends AbstractProcessorDescriptor<TokenFrequencySummarisation.Processor, TokenFrequencySummarisation.Settings> {
+public class TokenFrequencySummarisation
+    extends AbstractProcessorDescriptor<
+        TokenFrequencySummarisation.Processor, TokenFrequencySummarisation.Settings> {
 
   @Override
   protected Processor createComponent(Context context, Settings settings) {
     Stopwords sw;
-    if(context == null || context.getResource(Stopwords.class).isEmpty()){
+    if (context == null || context.getResource(Stopwords.class).isEmpty()) {
       sw = new StopwordsIso();
-    }else{
+    } else {
       sw = context.getResource(Stopwords.class).get();
     }
     return new Processor(settings.getNumSentences(), sw);
@@ -74,7 +75,7 @@ public class TokenFrequencySummarisation extends AbstractProcessorDescriptor<Tok
 
     private static final List<String> END_OF_SENTENCE = Arrays.asList(".", "!", "?");
 
-    public Processor(int numSentences, Stopwords stopwords){
+    public Processor(int numSentences, Stopwords stopwords) {
       this.numSentences = numSentences;
       this.stopwords = stopwords;
     }
@@ -84,30 +85,37 @@ public class TokenFrequencySummarisation extends AbstractProcessorDescriptor<Tok
       Map<String, Integer> tokenFrequency = new HashMap<>();
       Map<Annotation, Integer> sentenceScores = new HashMap<>();
 
-      //Score all tokens
-      content.getAnnotations().getByBoundsAndType(SpanBounds.class, AnnotationTypes.ANNOTATION_TYPE_WORDTOKEN)
+      // Score all tokens
+      content
+          .getAnnotations()
+          .getByBoundsAndType(SpanBounds.class, AnnotationTypes.ANNOTATION_TYPE_WORDTOKEN)
           .map(a -> getLemma(content, a))
           .filter(w -> !stopwords.isStopword(w))
           .filter(w -> w.matches(("[a-z][-a-z0-9]*"))) // Ignore punctuation, just numbers, etc.
-          .forEach(w ->  tokenFrequency.merge(w, 1, Integer::sum));
+          .forEach(w -> tokenFrequency.merge(w, 1, Integer::sum));
 
-      //Score each sentence, ignoring stop words
-      content.getAnnotations().getByBoundsAndType(SpanBounds.class, AnnotationTypes.ANNOTATION_TYPE_SENTENCE)
-          .forEach(s -> {
-            SpanBounds sb = s.getBounds(SpanBounds.class).get();
+      // Score each sentence, ignoring stop words
+      content
+          .getAnnotations()
+          .getByBoundsAndType(SpanBounds.class, AnnotationTypes.ANNOTATION_TYPE_SENTENCE)
+          .forEach(
+              s -> {
+                SpanBounds sb = s.getBounds(SpanBounds.class).get();
 
-            int score = content.getBetween(sb.getBegin(), sb.getEnd())
-                .filter(a -> AnnotationTypes.ANNOTATION_TYPE_WORDTOKEN.equals(a.getType()))
-                .map(a -> getLemma(content, a))
-                .filter(w -> !stopwords.isStopword(w))
-                .filter(w -> w.matches(("[a-z][-a-z0-9]*")))
-                .mapToInt(tokenFrequency::get)
-                .sum();
+                int score =
+                    content
+                        .getBetween(sb.getBegin(), sb.getEnd())
+                        .filter(a -> AnnotationTypes.ANNOTATION_TYPE_WORDTOKEN.equals(a.getType()))
+                        .map(a -> getLemma(content, a))
+                        .filter(w -> !stopwords.isStopword(w))
+                        .filter(w -> w.matches(("[a-z][-a-z0-9]*")))
+                        .mapToInt(tokenFrequency::get)
+                        .sum();
 
-            sentenceScores.put(s, score);
-          });
+                sentenceScores.put(s, score);
+              });
 
-      //Read top X sentences
+      // Read top X sentences
       List<Annotation> topSentences =
           sentenceScores.entrySet().stream()
               .sorted((e1, e2) -> -Double.compare(e1.getValue(), e2.getValue()))
@@ -116,8 +124,9 @@ public class TokenFrequencySummarisation extends AbstractProcessorDescriptor<Tok
               .sorted(SortUtils.SORT_BY_SPANBOUNDS)
               .collect(Collectors.toList());
 
-      //Create summary string
-      String summary = topSentences.stream()
+      // Create summary string
+      String summary =
+          topSentences.stream()
               .map(s -> content.getText(s).orElse(""))
               .filter(s -> !s.isEmpty())
               .map(
@@ -125,24 +134,29 @@ public class TokenFrequencySummarisation extends AbstractProcessorDescriptor<Tok
                     String lastChar = s.substring(s.length() - 1);
                     if (!END_OF_SENTENCE.contains(lastChar)) {
                       return s + ".";
-                    }else {
+                    } else {
                       return s;
                     }
                   })
               .collect(Collectors.joining(" "));
 
-      //Create annotation
-      content.getAnnotations().create()
+      // Create annotation
+      content
+          .getAnnotations()
+          .create()
           .withBounds(ContentBounds.getInstance())
           .withType(AnnotationTypes.ANNOTATION_TYPE_SUMMARY)
           .withProperty(PropertyKeys.PROPERTY_KEY_VALUE, summary)
-      .save();
+          .save();
     }
 
     private static String getLemma(Text content, Annotation a) {
-      if(a.getProperties().has(PropertyKeys.PROPERTY_KEY_LEMMA, String.class)){
-        return a.getProperties().get(PropertyKeys.PROPERTY_KEY_LEMMA, String.class).get().toLowerCase();
-      }else{
+      if (a.getProperties().has(PropertyKeys.PROPERTY_KEY_LEMMA, String.class)) {
+        return a.getProperties()
+            .get(PropertyKeys.PROPERTY_KEY_LEMMA, String.class)
+            .get()
+            .toLowerCase();
+      } else {
         return content.getText(a).orElse("").toLowerCase();
       }
     }
@@ -152,7 +166,7 @@ public class TokenFrequencySummarisation extends AbstractProcessorDescriptor<Tok
     private final int numSentences;
 
     @JsonbCreator
-    public Settings(@JsonbProperty("numSentences") int numSentences){
+    public Settings(@JsonbProperty("numSentences") int numSentences) {
       this.numSentences = numSentences;
     }
 

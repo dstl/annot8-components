@@ -15,24 +15,23 @@
  */
 package uk.gov.dstl.annot8.military.processors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import io.annot8.api.annotations.Annotation;
 import io.annot8.api.properties.ImmutableProperties;
 import io.annot8.api.settings.NoSettings;
 import io.annot8.api.stores.AnnotationStore;
 import io.annot8.testing.testimpl.TestItem;
 import io.annot8.testing.testimpl.content.TestStringContent;
-import org.junit.jupiter.api.Test;
-
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
 
 public class BritishArmyUnitTest {
 
   @Test
-  public void testCreation(){
+  public void testCreation() {
     BritishArmyUnit ba = new BritishArmyUnit();
     BritishArmyUnit.Processor baProc = ba.createComponent(null, NoSettings.getInstance());
     assertNotNull(baProc);
@@ -40,12 +39,15 @@ public class BritishArmyUnitTest {
   }
 
   @Test
-  public void testDetection(){
+  public void testDetection() {
     TestItem testItem = new TestItem();
-    TestStringContent content = testItem.createContent(TestStringContent.class)
-        .withData("1 Pl, A Coy have reported suspicious activity whilst patrolling near CP A." +
-            " 1 Pl did not investigate further.")
-        .save();
+    TestStringContent content =
+        testItem
+            .createContent(TestStringContent.class)
+            .withData(
+                "1 Pl, A Coy have reported suspicious activity whilst patrolling near CP A."
+                    + " 1 Pl did not investigate further.")
+            .save();
 
     BritishArmyUnit ba = new BritishArmyUnit();
     BritishArmyUnit.Processor baProc = ba.createComponent(null, NoSettings.getInstance());
@@ -53,23 +55,38 @@ public class BritishArmyUnitTest {
 
     AnnotationStore store = content.getAnnotations();
 
-    Map<String, Annotation> annotations = store.getAll().collect(Collectors.toMap(a -> a.getBounds().toString(), a -> a));
+    Map<String, Annotation> annotations =
+        store.getAll().collect(Collectors.toMap(a -> a.getBounds().toString(), a -> a));
     assertEquals(2, annotations.size());
-    assertEquals("1 Pl", annotations.get("io.annot8.common.data.bounds.SpanBounds [begin=0, end=12]")
-        .getProperties().getOrDefault("platoon", ""));
-    assertEquals("A Coy", annotations.get("io.annot8.common.data.bounds.SpanBounds [begin=0, end=12]")
-        .getProperties().getOrDefault("company", ""));
-    assertEquals("1 Pl", annotations.get("io.annot8.common.data.bounds.SpanBounds [begin=75, end=80]")
-        .getProperties().getOrDefault("platoon", ""));
-
+    assertEquals(
+        "1 Pl",
+        annotations
+            .get("io.annot8.common.data.bounds.SpanBounds [begin=0, end=12]")
+            .getProperties()
+            .getOrDefault("platoon", ""));
+    assertEquals(
+        "A Coy",
+        annotations
+            .get("io.annot8.common.data.bounds.SpanBounds [begin=0, end=12]")
+            .getProperties()
+            .getOrDefault("company", ""));
+    assertEquals(
+        "1 Pl",
+        annotations
+            .get("io.annot8.common.data.bounds.SpanBounds [begin=75, end=80]")
+            .getProperties()
+            .getOrDefault("platoon", ""));
   }
 
   @Test
-  public void testAlternateOrder(){
+  public void testAlternateOrder() {
     TestItem testItem = new TestItem();
-    TestStringContent content = testItem.createContent(TestStringContent.class)
-        .withData("B Coy, 2 Pl 2 Sect have reported suspicious activity whilst patrolling near CP A.")
-        .save();
+    TestStringContent content =
+        testItem
+            .createContent(TestStringContent.class)
+            .withData(
+                "B Coy, 2 Pl 2 Sect have reported suspicious activity whilst patrolling near CP A.")
+            .save();
 
     BritishArmyUnit ba = new BritishArmyUnit();
     BritishArmyUnit.Processor baProc = ba.createComponent(null, NoSettings.getInstance());
@@ -77,10 +94,13 @@ public class BritishArmyUnitTest {
 
     AnnotationStore store = content.getAnnotations();
 
-    Map<String, Annotation> annotations = store.getAll().collect(Collectors.toMap(a -> a.getBounds().toString(), a -> a));
+    Map<String, Annotation> annotations =
+        store.getAll().collect(Collectors.toMap(a -> a.getBounds().toString(), a -> a));
     assertEquals(1, annotations.size());
-    ImmutableProperties match1Props = annotations.get("io.annot8.common.data.bounds.SpanBounds [begin=0, end=19]")
-        .getProperties();
+    ImmutableProperties match1Props =
+        annotations
+            .get("io.annot8.common.data.bounds.SpanBounds [begin=0, end=19]")
+            .getProperties();
     assertEquals("B Coy", match1Props.getOrDefault("company", ""));
     assertEquals("2 Pl", match1Props.getOrDefault("platoon", ""));
     assertEquals("2 Sect", match1Props.getOrDefault("section", ""));

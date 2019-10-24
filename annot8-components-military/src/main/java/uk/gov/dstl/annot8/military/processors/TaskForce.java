@@ -28,7 +28,6 @@ import io.annot8.common.data.content.Text;
 import io.annot8.components.base.processors.AbstractRegexProcessor;
 import io.annot8.conventions.AnnotationTypes;
 import io.annot8.conventions.PropertyKeys;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,16 +50,14 @@ public class TaskForce extends AbstractProcessorDescriptor<TaskForce.Processor, 
   public static class Processor extends AbstractRegexProcessor {
     public Processor() {
       super(
-          Pattern.compile("\\b(tf|task force)[\\h]*([\\-0-9]+)\\b",
-              Pattern.CASE_INSENSITIVE),
+          Pattern.compile("\\b(tf|task force)[\\h]*([\\-0-9]+)\\b", Pattern.CASE_INSENSITIVE),
           0,
-          AnnotationTypes.ENTITY_PREFIX + "taskForce"
-      );
+          AnnotationTypes.ENTITY_PREFIX + "taskForce");
     }
 
     @Override
-    protected void addProperties(Annotation.Builder builder, Matcher m){
-      builder.withProperty(PropertyKeys.PROPERTY_KEY_IDENTIFIER, "TF"+m.group(2));
+    protected void addProperties(Annotation.Builder builder, Matcher m) {
+      builder.withProperty(PropertyKeys.PROPERTY_KEY_IDENTIFIER, "TF" + m.group(2));
     }
   }
 }

@@ -31,14 +31,15 @@ import io.annot8.components.gazetteers.processors.impl.CollectionGazetteer;
 import io.annot8.components.stopwords.resources.NoOpStopwords;
 import io.annot8.components.stopwords.resources.Stopwords;
 import io.annot8.conventions.AnnotationTypes;
-
 import java.util.Set;
 
 @ComponentName("Generic Military Platform")
 @ComponentDescription("Extracts military platforms (with descriptions) from text")
-public class GenericMilitaryPlatform extends AbstractProcessorDescriptor<MultiProcessor, NoSettings> {
+public class GenericMilitaryPlatform
+    extends AbstractProcessorDescriptor<MultiProcessor, NoSettings> {
 
-  public static final String MILITARY_PLATFORM_TYPE = AnnotationTypes.ENTITY_PREFIX + "militaryPlatform";
+  public static final String MILITARY_PLATFORM_TYPE =
+      AnnotationTypes.ENTITY_PREFIX + "militaryPlatform";
 
   @Override
   protected MultiProcessor createComponent(Context context, NoSettings noSettings) {
@@ -49,36 +50,38 @@ public class GenericMilitaryPlatform extends AbstractProcessorDescriptor<MultiPr
       sw = context.getResource(Stopwords.class).get();
     }
 
-    Processor pNaval = new AhoCorasick.Processor(
-        new CollectionGazetteer(Set.of(
-            "aircraft carrier",
-            "assault ship",
-            "frigate",
-            "destroyer",
-            "submarine",
-            "minesweeper",
-            "warship")),
-        new GenericMilitaryPlatformSettings(MILITARY_PLATFORM_TYPE, "naval"));
+    Processor pNaval =
+        new AhoCorasick.Processor(
+            new CollectionGazetteer(
+                Set.of(
+                    "aircraft carrier",
+                    "assault ship",
+                    "frigate",
+                    "destroyer",
+                    "submarine",
+                    "minesweeper",
+                    "warship")),
+            new GenericMilitaryPlatformSettings(MILITARY_PLATFORM_TYPE, "naval"));
 
-    Processor pGround = new AhoCorasick.Processor(
-        new CollectionGazetteer(Set.of(
-            "tank",
-            "armoured vehicle",
-            "humvee",
-            "military vehicle",
-            "tactical vehicle")),
-        new GenericMilitaryPlatformSettings(MILITARY_PLATFORM_TYPE, "ground"));
+    Processor pGround =
+        new AhoCorasick.Processor(
+            new CollectionGazetteer(
+                Set.of(
+                    "tank", "armoured vehicle", "humvee", "military vehicle", "tactical vehicle")),
+            new GenericMilitaryPlatformSettings(MILITARY_PLATFORM_TYPE, "ground"));
 
-    Processor pAir = new AhoCorasick.Processor(
-        new CollectionGazetteer(Set.of(
-            "attack aircraft",
-            "attack helicopter",
-            "drone",
-            "fighter jet",
-            "fighter plane",
-            "uav",
-            "warplane")),
-        new GenericMilitaryPlatformSettings(MILITARY_PLATFORM_TYPE, "air"));
+    Processor pAir =
+        new AhoCorasick.Processor(
+            new CollectionGazetteer(
+                Set.of(
+                    "attack aircraft",
+                    "attack helicopter",
+                    "drone",
+                    "fighter jet",
+                    "fighter plane",
+                    "uav",
+                    "warplane")),
+            new GenericMilitaryPlatformSettings(MILITARY_PLATFORM_TYPE, "air"));
 
     return new MultiProcessor(pNaval, pGround, pAir);
   }
@@ -91,8 +94,8 @@ public class GenericMilitaryPlatform extends AbstractProcessorDescriptor<MultiPr
         .build();
   }
 
-  private static class GenericMilitaryPlatformSettings extends AhoCorasick.Settings{
-    public GenericMilitaryPlatformSettings(String type, String subtype){
+  private static class GenericMilitaryPlatformSettings extends AhoCorasick.Settings {
+    public GenericMilitaryPlatformSettings(String type, String subtype) {
       super();
 
       setType(type);

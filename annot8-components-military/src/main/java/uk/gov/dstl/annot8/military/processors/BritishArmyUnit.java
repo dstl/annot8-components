@@ -28,13 +28,13 @@ import io.annot8.common.data.content.Text;
 import io.annot8.components.base.processors.AbstractRegexProcessor;
 import io.annot8.conventions.AnnotationTypes;
 import io.annot8.conventions.PropertyKeys;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @ComponentName("British Army Units")
 @ComponentDescription("Extracts British Army Unit designations from text")
-public class BritishArmyUnit extends AbstractProcessorDescriptor<BritishArmyUnit.Processor, NoSettings> {
+public class BritishArmyUnit
+    extends AbstractProcessorDescriptor<BritishArmyUnit.Processor, NoSettings> {
   @Override
   protected Processor createComponent(Context context, NoSettings noSettings) {
     return new Processor();
@@ -51,29 +51,29 @@ public class BritishArmyUnit extends AbstractProcessorDescriptor<BritishArmyUnit
   public static class Processor extends AbstractRegexProcessor {
     public Processor() {
       super(
-          Pattern.compile("\\b(?=\\d+ Sect\\b|\\d+ Pl\\b|[A-Z] Coy\\b)" +
-                  "(?<section>\\d+ Sect\\b)?+[\\s,]*" +
-                  "(?<platoon>\\d+ Pl\\b)?+[\\s,]*" +
-                  "(?<company>[A-Z]+ Coy\\b)?+[\\s,]*" +
-                  "(?<platoon2>\\d+ Pl\\b)?+[\\s,]*" +
-                  "(?<section2>\\d+ Sect\\b)?+[\\s,]*", // Will match abbreviations in any order
+          Pattern.compile(
+              "\\b(?=\\d+ Sect\\b|\\d+ Pl\\b|[A-Z] Coy\\b)"
+                  + "(?<section>\\d+ Sect\\b)?+[\\s,]*"
+                  + "(?<platoon>\\d+ Pl\\b)?+[\\s,]*"
+                  + "(?<company>[A-Z]+ Coy\\b)?+[\\s,]*"
+                  + "(?<platoon2>\\d+ Pl\\b)?+[\\s,]*"
+                  + "(?<section2>\\d+ Sect\\b)?+[\\s,]*", // Will match abbreviations in any order
               Pattern.CASE_INSENSITIVE),
           0,
-          AnnotationTypes.ANNOTATION_TYPE_ORGANISATION
-      );
+          AnnotationTypes.ANNOTATION_TYPE_ORGANISATION);
     }
 
     @Override
-    protected void addProperties(Annotation.Builder builder, Matcher m){
-      if (m.group("platoon2") != null){
+    protected void addProperties(Annotation.Builder builder, Matcher m) {
+      if (m.group("platoon2") != null) {
         builder.withProperty("platoon", m.group("platoon2"));
-      }else{
+      } else {
         builder.withProperty("platoon", m.group("platoon"));
       }
 
-      if (m.group("section2") != null){
+      if (m.group("section2") != null) {
         builder.withProperty("section", m.group("section2"));
-      }else{
+      } else {
         builder.withProperty("section", m.group("section"));
       }
 
