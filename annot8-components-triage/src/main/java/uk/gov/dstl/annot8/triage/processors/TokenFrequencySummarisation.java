@@ -19,8 +19,10 @@ import io.annot8.api.annotations.Annotation;
 import io.annot8.api.capabilities.Capabilities;
 import io.annot8.api.components.annotations.ComponentDescription;
 import io.annot8.api.components.annotations.ComponentName;
+import io.annot8.api.components.annotations.ComponentTags;
 import io.annot8.api.components.annotations.SettingsClass;
 import io.annot8.api.context.Context;
+import io.annot8.api.settings.Description;
 import io.annot8.common.components.AbstractProcessorDescriptor;
 import io.annot8.common.components.capabilities.SimpleCapabilities;
 import io.annot8.common.data.bounds.ContentBounds;
@@ -41,7 +43,9 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
 @ComponentName("Token Frequency Summarisation")
-@ComponentDescription("Create a text summary of a document based on token frequency")
+@ComponentDescription(
+    "Create a text summary of a document by selecting the sentences with the most commonly occurring tokens")
+@ComponentTags({"triage", "summarisation", "sentence", "token", "frequency"})
 @SettingsClass(TokenFrequencySummarisation.Settings.class)
 public class TokenFrequencySummarisation
     extends AbstractProcessorDescriptor<
@@ -170,6 +174,7 @@ public class TokenFrequencySummarisation
       this.numSentences = numSentences;
     }
 
+    @Description("The number of sentences to select")
     public int getNumSentences() {
       return numSentences;
     }

@@ -18,6 +18,7 @@ package uk.gov.dstl.annot8.science.processors;
 import io.annot8.api.capabilities.Capabilities;
 import io.annot8.api.components.annotations.ComponentDescription;
 import io.annot8.api.components.annotations.ComponentName;
+import io.annot8.api.components.annotations.ComponentTags;
 import io.annot8.api.context.Context;
 import io.annot8.api.settings.NoSettings;
 import io.annot8.api.stores.AnnotationStore;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
 
 @ComponentName("CAS Registry Number")
 @ComponentDescription("Identify chemicals by looking for CAS numbers and checking the check digit")
+@ComponentTags({"science", "chemistry", "chemical", "cas"})
 public class CasRegistryNumber
     extends AbstractProcessorDescriptor<CasRegistryNumber.Processor, NoSettings> {
 
@@ -51,7 +53,7 @@ public class CasRegistryNumber
   public static class Processor extends AbstractTextProcessor {
 
     public static final Pattern CAS_REGEX =
-        Pattern.compile("\\b(\\d{2,7})-(\\d{2})-(\\d{1})\\b", Pattern.CASE_INSENSITIVE);
+        Pattern.compile("\\b(\\d{2,7})-(\\d{2})-(\\d)\\b", Pattern.CASE_INSENSITIVE);
 
     @Override
     protected void process(Text content) {
@@ -62,18 +64,18 @@ public class CasRegistryNumber
       while (m.find()) {
 
         // Check checksum
-        Integer checkDigit = Integer.valueOf(m.group(3));
+        int checkDigit = Integer.parseInt(m.group(3));
 
         String part1 = m.group(1);
         String part2 = m.group(2);
 
         part1 = new StringBuilder(part1).reverse().toString();
 
-        Integer sum =
+        int sum =
             Integer.parseInt(part2.substring(1, 2)) + (2 * Integer.parseInt(part2.substring(0, 1)));
-        Integer pos = 0;
+        int pos = 0;
         while (pos < part1.length()) {
-          Integer x = Integer.valueOf(part1.substring(pos, pos + 1));
+          int x = Integer.parseInt(part1.substring(pos, pos + 1));
           sum += (pos + 3) * x;
 
           pos++;

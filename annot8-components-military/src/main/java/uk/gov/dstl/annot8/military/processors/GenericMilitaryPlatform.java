@@ -19,6 +19,7 @@ import io.annot8.api.capabilities.Capabilities;
 import io.annot8.api.components.Processor;
 import io.annot8.api.components.annotations.ComponentDescription;
 import io.annot8.api.components.annotations.ComponentName;
+import io.annot8.api.components.annotations.ComponentTags;
 import io.annot8.api.context.Context;
 import io.annot8.api.settings.NoSettings;
 import io.annot8.common.components.AbstractProcessorDescriptor;
@@ -28,13 +29,12 @@ import io.annot8.common.data.content.Text;
 import io.annot8.components.base.processors.MultiProcessor;
 import io.annot8.components.gazetteers.processors.AhoCorasick;
 import io.annot8.components.gazetteers.processors.impl.CollectionGazetteer;
-import io.annot8.components.stopwords.resources.NoOpStopwords;
-import io.annot8.components.stopwords.resources.Stopwords;
 import io.annot8.conventions.AnnotationTypes;
 import java.util.Set;
 
 @ComponentName("Generic Military Platform")
 @ComponentDescription("Extracts military platforms (with descriptions) from text")
+@ComponentTags({"military"})
 public class GenericMilitaryPlatform
     extends AbstractProcessorDescriptor<MultiProcessor, NoSettings> {
 
@@ -43,13 +43,6 @@ public class GenericMilitaryPlatform
 
   @Override
   protected MultiProcessor createComponent(Context context, NoSettings noSettings) {
-    Stopwords sw;
-    if (context == null || context.getResource(Stopwords.class).isEmpty()) {
-      sw = new NoOpStopwords();
-    } else {
-      sw = context.getResource(Stopwords.class).get();
-    }
-
     Processor pNaval =
         new AhoCorasick.Processor(
             new CollectionGazetteer(
