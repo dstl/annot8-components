@@ -15,7 +15,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
 
-    <annot8.version>0.5.0</annot8.version>
+    <annot8-api.version>1.0</annot8-api.version>
 
     <!-- Testing versions -->
     <junit.version>5.7.0</junit.version>
@@ -27,25 +27,25 @@
     <dependency>
       <groupId>io.annot8</groupId>
       <artifactId>annot8-api</artifactId>
-      <version>${annot8.version}</version>
+      <version>${annot8-api.version}</version>
     </dependency>
     <!-- Common data (e.g. Text) -->
     <dependency>
       <groupId>io.annot8</groupId>
       <artifactId>annot8-common-data</artifactId>
-      <version>${annot8.version}</version>
+      <version>1.0.0</version>
     </dependency>
     <!-- Abstract processors -->
     <dependency>
       <groupId>io.annot8</groupId>
       <artifactId>annot8-components-base</artifactId>
-      <version>${annot8.version}</version>
+      <version>1.0.0</version>
     </dependency>
     <!-- Conventions -->
     <dependency>
       <groupId>io.annot8</groupId>
       <artifactId>annot8-conventions</artifactId>
-      <version>${annot8.version}</version>
+      <version>1.0.0</version>
     </dependency>
 
   </dependencies>
@@ -62,7 +62,7 @@
       <dependency>
         <groupId>io.annot8</groupId>
         <artifactId>annot8-test-impl</artifactId>
-        <version>${annot8.version}</version>
+        <version>1.0.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>

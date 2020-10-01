@@ -29,7 +29,7 @@ import io.annot8.common.data.bounds.ContentBounds;
 import io.annot8.common.data.bounds.SpanBounds;
 import io.annot8.common.data.content.Text;
 import io.annot8.common.data.utils.SortUtils;
-import io.annot8.components.base.processors.AbstractTextProcessor;
+import io.annot8.components.base.text.processors.AbstractTextProcessor;
 import io.annot8.components.stopwords.resources.Stopwords;
 import io.annot8.components.stopwords.resources.StopwordsIso;
 import io.annot8.conventions.AnnotationTypes;
