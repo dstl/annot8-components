@@ -167,16 +167,24 @@ public class TokenFrequencySummarisation
   }
 
   public static class Settings implements io.annot8.api.settings.Settings {
-    private final int numSentences;
+    private int numSentences = 3;
+
+    public Settings() {
+      // Default settings
+    }
 
     @JsonbCreator
     public Settings(@JsonbProperty("numSentences") int numSentences) {
       this.numSentences = numSentences;
     }
 
-    @Description("The number of sentences to select")
+    @Description(value = "The number of sentences to select", defaultValue = "3")
     public int getNumSentences() {
       return numSentences;
+    }
+
+    public void setNumSentences(int numSentences) {
+      this.numSentences = numSentences;
     }
 
     @Override
