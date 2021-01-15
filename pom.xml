@@ -6,7 +6,7 @@
 
   <groupId>uk.gov.dstl.annot8</groupId>
   <artifactId>annot8-components</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1.0</version>
   <packaging>pom</packaging>
 
   <name>Dstl Annot8 Components</name>
@@ -19,7 +19,19 @@
 
     <!-- Testing versions -->
     <junit.version>5.7.0</junit.version>
-    <johnzon.version>1.2.8</johnzon.version>
+    <mockito.version>3.7.0</mockito.version>
+    <johnzon.version>1.2.9</johnzon.version>
+
+    <!-- Plugins -->
+    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <spotless-maven-plugin.version>2.7.0</spotless-maven-plugin.version>
+    <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
+    <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+    <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+    <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+    <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
   </properties>
 
   <dependencies>
@@ -33,21 +45,20 @@
     <dependency>
       <groupId>io.annot8</groupId>
       <artifactId>annot8-common-data</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.2</version>
     </dependency>
     <!-- Abstract processors -->
     <dependency>
       <groupId>io.annot8</groupId>
       <artifactId>annot8-components-base</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
     <!-- Conventions -->
     <dependency>
       <groupId>io.annot8</groupId>
       <artifactId>annot8-conventions</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
-
   </dependencies>
 
   <dependencyManagement>
@@ -60,9 +71,15 @@
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>io.annot8</groupId>
         <artifactId>annot8-test-impl</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.2</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -79,13 +96,56 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+
+          <!-- For components, enable parameters option so that Jackson can map to settings objects -->
+          <parameters>true</parameters>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>${nexus-staging-maven-plugin.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <version>2.3.1</version>
+        <version>${spotless-maven-plugin.version}</version>
         <configuration>
           <java>
             <googleJavaFormat>
@@ -104,11 +164,126 @@
         </executions>
       </plugin>
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+          <configuration>
+            <additionalJOptions>-html5</additionalJOptions>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <!-- This profile is used to deploy to Maven central -->
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <!-- Javadoc and Java Modules seem not to play well together -->
+                <!-- Allow errors which is not ideal, but seems necessary -->
+                <configuration>
+                  <failOnError>false</failOnError>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${maven-gpg-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>plugins</id>
+      <!-- This profile is used to build JAR which contain all dependencies -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>${maven-shade-plugin.version}</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
+                <configuration>
+                  <shadedClassifierName>plugin</shadedClassifierName>
+                  <artifactSet>
+                    <excludes>
+                      <exclude>io.annot8:annot8-api</exclude>
+                    </excludes>
+                  </artifactSet>
+                  <shadedArtifactAttached>true</shadedArtifactAttached>
+                  <outputDirectory>${maven.multiModuleProjectDirectory}/target</outputDirectory>
+                  <filters>
+                    <filter>
+                      <!-- filter out signature files from signed dependencies, else repackaging fails with security ex -->
+                      <artifact>*:*</artifact>
+                      <excludes>
+                        <exclude>META-INF/*.SF</exclude>
+                        <exclude>META-INF/*.DSA</exclude>
+                        <exclude>META-INF/*.RSA</exclude>
+                      </excludes>
+                    </filter>
+                  </filters>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <modules>
     <module>annot8-components-military</module>
     <module>annot8-components-science</module>
     <module>annot8-components-triage</module>
+    <module>annot8-orderers-dependency</module>
   </modules>
 </project>
