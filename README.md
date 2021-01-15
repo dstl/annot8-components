@@ -4,6 +4,7 @@ This repository contains collections of components for the [Annot8 Data Processi
 
 The collections of components are as follows:
 
+* Dependency Orderer - a pipeline orderer that will order pipelines based on the dependencies between components (as derived from their declared capabilities)
 * Military - components relating to extraction of military information from text
 * Science - components relating to extraction of scientific information from text
 * Triage - components relating to the triage of textual information
