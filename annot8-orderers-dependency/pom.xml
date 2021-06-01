@@ -5,7 +5,7 @@
   <parent>
     <artifactId>annot8-components</artifactId>
     <groupId>uk.gov.dstl.annot8</groupId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -15,7 +15,7 @@
   <description>Orders pipelines by the dependencies between components derived from their declared capabilities</description>
 
   <properties>
-    <annot8-api.version>1.0</annot8-api.version>
+    <annot8-api.version>1.1</annot8-api.version>
     <slf4j.version>1.7.30</slf4j.version>
 
     <maven.compiler.source>11</maven.compiler.source>
@@ -38,7 +38,7 @@
     <dependency>
       <groupId>org.jgrapht</groupId>
       <artifactId>jgrapht-core</artifactId>
-      <version>1.5.0</version>
+      <version>1.5.1</version>
     </dependency>
 
     <!-- Testing -->
