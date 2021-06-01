@@ -34,13 +34,13 @@ import io.annot8.components.stopwords.resources.Stopwords;
 import io.annot8.components.stopwords.resources.StopwordsIso;
 import io.annot8.conventions.AnnotationTypes;
 import io.annot8.conventions.PropertyKeys;
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.json.bind.annotation.JsonbCreator;
-import javax.json.bind.annotation.JsonbProperty;
 
 @ComponentName("Token Frequency Summarisation")
 @ComponentDescription(
